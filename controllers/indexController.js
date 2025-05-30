@@ -1,6 +1,8 @@
 async function getIndex(req, res) {
     if (req.isUnauthenticated()) {
-        res.render("log-in-form");
+        res.render("log-in-form", {
+            errors : []
+        });
     } else {
         res.render("index", {
             user: req.user,

@@ -9,6 +9,8 @@ const passport = require("passport");
 const configuratePassport = require("./config/passportConfig");
 
 const indexRouter = require("./routes/indexRouter");
+const loginRouter = require("./routes/loginRouter");
+const signupRouter = require("./routes/signupRouter");
 
 require('dotenv').config();
 
@@ -50,7 +52,18 @@ app.use((req, res, next) => {
 
 // Write all the routes
 app.use("/", indexRouter);
+app.use("/log-in", loginRouter);
+app.use("/sign-up", signupRouter);
 
+
+app.get("/log-out", (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`app listening on port ${PORT}!`));

@@ -11,6 +11,8 @@
     <div class="container">
         <h1>Please Log In</h1>
 
+        <%- include('./partials/errors.ejs') %>
+
         <form action="/log-in" method="POST">
             <div>
                 <label for="username">Username</label>

@@ -31,7 +31,39 @@ async function findUserById(id) {
     }
 }
 
+async function createUser(username, email, hashedPassword) {
+    try {
+        await prisma.user.create({
+            data: {
+                username: username,
+                email: email,
+                password: hashedPassword
+            }
+        });
+    } catch (err) {
+        console.log("There was an error: ", err);
+        throw err;
+    }
+}
+
+async function getUserByEmail(email) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+        return user;
+    } catch (err) {
+        console.log("Error finding user: ", err)
+        throw err;
+    }
+}
+
+
 module.exports = {
     findUserByUsername,
-    findUserById
+    findUserById,
+    createUser,
+    getUserByEmail
 }
