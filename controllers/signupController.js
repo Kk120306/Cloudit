@@ -30,7 +30,7 @@ async function handleSignUp(req, res, next) {
             hashedPassword
         );
 
-        res.redirect("/");
+        res.redirect("/log-in");
     } catch (err) {
         next(err);
     }

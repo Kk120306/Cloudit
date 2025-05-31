@@ -82,10 +82,35 @@ async function createFolder(userId, folderId, name) {
 async function getFolders(parentId) {
     const folders = await prisma.folder.findMany({
         where: {
-            parentId: parentId  
+            parentId: parentId
         }
     });
     return folders;
+}
+
+async function getFiles(folderId) {
+    const files = await prisma.file.findMany({
+        where: {
+            folderId: folderId,
+        }
+    });
+    return files;
+}
+
+async function createFile(name, path, size, userId, folderId) {
+    const data = {
+        name,
+        path,
+        size,
+        userId,
+        ...(folderId ? { folderId } : {})
+    };
+    try {
+        return await prisma.file.create({ data });
+    } catch (err) {
+        console.log("Error creating file: ", err);
+        throw err;
+    }
 }
 
 
@@ -98,5 +123,7 @@ module.exports = {
     createUser,
     getUserByEmail,
     createFolder,
-    getFolders
+    getFolders,
+    createFile,
+    getFiles
 }

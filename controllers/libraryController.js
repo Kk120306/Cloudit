@@ -1,6 +1,8 @@
 const multer = require("multer");
 const { validationResult } = require('express-validator');
 const db = require('../db/queries');
+const path = require('path');
+const fs = require('fs');
 
 async function getRoot(req, res) {
     if (req.isUnauthenticated()) {
@@ -16,10 +18,12 @@ async function getRoot(req, res) {
 
     try {
         const folders = await db.getFolders(folderId);
+        const files = await db.getFiles(folderId);
         res.render("library", {
             user: req.user,
             folders,
-            showBack: folderId !== null, // true if inside a subfolder
+            files,
+            showBack: folderId !== null,
             parentId: folderId,
             folderPath,
             filePath
@@ -73,14 +77,16 @@ async function newFolderPost(req, res) {
 
 
 
-
+const projectRoot = path.resolve(__dirname, '..');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const folderId = req.params.folderId || null;
-        const uploadPath = folderId ? path.join(__dirname, 'uploads', folderId) : path.join(__dirname, 'uploads');
+        const uploadPath = folderId
+            ? path.join(projectRoot, 'uploads', folderId)
+            : path.join(projectRoot, 'uploads');
 
         if (!fs.existsSync(uploadPath)) {
-            return cb(new Error("Upload folder does not exist"));
+            fs.mkdirSync(uploadPath, { recursive: true }); 
         }
 
         cb(null, uploadPath);
@@ -90,14 +96,21 @@ const storage = multer.diskStorage({
     }
 });
 
+
 const upload = multer({
     storage: storage,
     limits: { fileSize: 10.5 * 1024 * 1024 },
 }).single('myFile');
 
+
+
 function uploadFileGet(req, res) {
+    const folderId = req.params.folderId || null;
+    const actionPath = `/library${folderId ? '/' + folderId : ''}/upload`;
     if (req.isAuthenticated()) {
-        res.render("upload-form");
+        res.render("upload-form", {
+            actionPath
+        });
     } else {
         res.render("log-in-form", {
             errors: []
@@ -106,21 +119,46 @@ function uploadFileGet(req, res) {
 }
 
 async function uploadFilePost(req, res) {
-    upload(req, res, err => {
+    upload(req, res, async err => {
         if (err) {
+            console.error("Upload error:", err); // Log full error for debugging
             return res.render("error-page", {
-                errorMessage: "File is too large!"
-            })
+                errorMessage: "Upload error: " + err.message
+            });
         }
-        if (!req.file) {
+
+        if (!req.file || !req.user) {
             return res.render("error-page", {
-                errorMessage: "Something went wrong."
-            })
+                errorMessage: "error2."
+            });
         }
-        console.log("uploaded successfully!");
-        res.redirect("/library");
+
+        try {
+            const folderId = req.params.folderId || null;
+            console.log("folder id", folderId);
+            const name = req.file.originalname;
+            const path = req.file.path;
+            const size = req.file.size;
+            const userId = req.user.id;
+
+            await db.createFile(name, path, size, userId, folderId);
+
+            console.log("Uploaded and saved to DB successfully!");
+
+            if (folderId) {
+                res.redirect(`/library/${folderId}`);
+            } else {
+                res.redirect("/library");
+            }
+        } catch (dbError) {
+            console.error("DB insert error:", dbError);
+            res.render("error-page", {
+                errorMessage: "Failed to save file to the database."
+            });
+        }
     });
 }
+
 
 
 

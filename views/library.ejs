@@ -26,5 +26,16 @@
             </div>
         <% }) %>
     </div>
+
+    <h2 class="text-xl font-semibold">Your Files:</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        <% files.forEach(file => { %>
+            <div class="p-4 border rounded shadow">
+                <h3 class="text-lg font-medium"><%= file.name %></h3>
+                <p><%= file.size %></p>
+            </div>
+        <% }) %>
+    </div>
 </body>
 </html>
