@@ -11,6 +11,7 @@ const configuratePassport = require("./config/passportConfig");
 const indexRouter = require("./routes/indexRouter");
 const loginRouter = require("./routes/loginRouter");
 const signupRouter = require("./routes/signupRouter");
+const libraryRouter = require("./routes/libraryRouter")
 
 require('dotenv').config();
 
@@ -22,22 +23,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-  expressSession({
-    cookie: {
-     maxAge: 7 * 24 * 60 * 60 * 1000 // ms
-    },
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    store: new PrismaSessionStore(
-      new PrismaClient(),
-      {
-        checkPeriod: 2 * 60 * 1000,  //ms
-        dbRecordIdIsSessionId: true,
-        dbRecordIdFunction: undefined,
-      }
-    )
-  })
+    expressSession({
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000 // ms
+        },
+        secret: process.env.SESSION_SECRET,
+        resave: true,
+        saveUninitialized: true,
+        store: new PrismaSessionStore(
+            new PrismaClient(),
+            {
+                checkPeriod: 2 * 60 * 1000,  //ms
+                dbRecordIdIsSessionId: true,
+                dbRecordIdFunction: undefined,
+            }
+        )
+    })
 );
 
 app.use(passport.initialize());
@@ -51,9 +52,13 @@ app.use((req, res, next) => {
 });
 
 // Write all the routes
-app.use("/", indexRouter);
+app.get("/", (req, res) => {
+    res.render("index")
+});
+
 app.use("/log-in", loginRouter);
 app.use("/sign-up", signupRouter);
+app.use("/library", libraryRouter);
 
 
 app.get("/log-out", (req, res, next) => {

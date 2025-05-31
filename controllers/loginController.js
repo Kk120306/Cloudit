@@ -6,7 +6,7 @@ function getLogInForm(req, res) {
             errors : []
         });
     } else {
-        res.redirect("/");
+        res.redirect("/library");
     }
 }
 
@@ -25,7 +25,7 @@ function handleLogin(req, res, next) {
             if (err) {
                 return next(err); 
             }
-            res.redirect('/');
+            res.redirect('/library');
         });
     })(req, res, next);
 }

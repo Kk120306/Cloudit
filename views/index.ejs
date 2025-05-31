@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cloudit</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <%- include('./partials/navbar.ejs') %>
-    <h1>Welcome back, <%= user.username %> 👋</h1>
+    <div>
+        <h1>Cloudit</h1>
+    </div>
+
+    <p>Welcome to Cloudit – Your cloud-powered productivity companion.</p>
+
+    <a href="/log-in">
+        <button>Get Started</button>
+    </a>
 </body>
 </html>
