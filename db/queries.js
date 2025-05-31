@@ -79,19 +79,21 @@ async function createFolder(userId, folderId, name) {
     }
 }
 
-async function getFolders(parentId) {
+async function getFolders(parentId, userId) {
     const folders = await prisma.folder.findMany({
         where: {
-            parentId: parentId
+            parentId: parentId,
+            userId: userId
         }
     });
     return folders;
 }
 
-async function getFiles(folderId) {
+async function getFiles(folderId, userId) {
     const files = await prisma.file.findMany({
         where: {
             folderId: folderId,
+            userId: userId
         }
     });
     return files;

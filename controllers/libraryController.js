@@ -15,10 +15,11 @@ async function getRoot(req, res) {
 
     const folderPath = `/library${folderId ? '/' + folderId : ''}/new-folder`;;
     const filePath = `/library${folderId ? '/' + folderId : ''}/upload`
+    const userId = req.user.id;
 
     try {
-        const folders = await db.getFolders(folderId);
-        const files = await db.getFiles(folderId);
+        const folders = await db.getFolders(folderId, userId);
+        const files = await db.getFiles(folderId, userId);
         res.render("library", {
             user: req.user,
             folders,
