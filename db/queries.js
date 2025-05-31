@@ -205,8 +205,34 @@ async function deleteFolder(folderId, userId) {
     }
 }
 
+async function getFile(userId, fileId) {
+    try {
+        const file =  await prisma.file.findUnique({
+            where: {
+                id: fileId,
+                userId: userId
+            }
+        });
+        return file;
+    } catch (err) {
+        console.error("Could not get the file :", err);
+        throw err
+    }
+}
 
-
+async function deleteFile(fileId, userId) {
+    try {
+        await prisma.file.delete({
+            where: {
+                id : fileId,
+                userId: userId
+            }
+        })
+    } catch (err) {
+        console.err("File could not be deleted: ", err);
+        throw err;
+    }
+}
 
 
 
@@ -220,5 +246,7 @@ module.exports = {
     createFile,
     getFiles,
     updateFolder,
-    deleteFolder
+    deleteFolder,
+    getFile,
+    deleteFile
 }

@@ -210,6 +210,29 @@ async function deleteFolder(req, res) {
     res.redirect("/library")
 }
 
+async function getFileDetails(req,res) {
+    if (req.isAuthenticated()) {
+        const userId = req.user.id;
+        const fileId = req.params.fileId;
+        const file = await db.getFile(userId, fileId);
+        res.render("file", {
+            file
+        })
+    } else {
+        res.render("log-in-form", {
+            errors: []
+        });
+    }
+}
+
+async function deleteFile(req,res) {
+    const fileId = req.params.fileId;
+    const userId = req.user.id;
+    await db.deleteFile(fileId, userId);
+    res.redirect("/library")
+}
+
+
 
 module.exports = {
     getRoot,
@@ -219,5 +242,7 @@ module.exports = {
     newFolderPost,
     updateFolderGet,
     updateFolderPost,
-    deleteFolder
+    deleteFolder,
+    getFileDetails,
+    deleteFile
 }

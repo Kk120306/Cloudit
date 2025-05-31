@@ -1,47 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
     <%- include('./partials/navbar.ejs') %>
 
-    <h1 class="text-2xl font-bold mb-4">Welcome back, <%= user.username %> 👋</h1>
+        <h1 class="text-2xl font-bold mb-4">Welcome back, <%= user.username %> 👋</h1>
 
-    <% if (showBack) { %>
-        <a href="/library" class="text-blue-600 underline">⬅ Back to root</a>
-    <% } %>
-    
+        <% if (showBack) { %>
+            <a href="/library" class="text-blue-600 underline">⬅ Back to root</a>
+            <% } %>
 
-    <h2 class="text-xl font-semibold">Your Folders:</h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-        <% folders.forEach(folder => { %>
-            <div class="p-4 border rounded shadow">
-                <h3 class="text-lg font-medium"><%= folder.name %></h3>
-                <p class="text-sm text-gray-600"><%= folder.updatedAt.toLocaleDateString() %></p>
-                <a href="/library/<%= folder.id %>">Open</a>
-                <a href="/library/<%= folder.id %>/update-folder"">Update</a>
-                <form action="/library/<%= folder.id %>/delete-folder" method="POST" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Are you sure you want to delete this folder?')">Delete</button>
-                </form>
-            </div>
-        <% }) %>
-    </div>
+                <h2 class="text-xl font-semibold">Your Folders:</h2>
 
-    <h2 class="text-xl font-semibold">Your Files:</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                    <% folders.forEach(folder=> { %>
+                        <div class="p-4 border rounded shadow">
+                            <h3 class="text-lg font-medium">
+                                <%= folder.name %>
+                            </h3>
+                            <p class="text-sm text-gray-600">
+                                <%= folder.updatedAt.toLocaleDateString() %>
+                            </p>
+                            <a href="/library/<%= folder.id %>">Open</a>
+                            <a href="/library/<%= folder.id %>/update-folder"">Update</a>
+                <form action=" /library/<%=folder.id %>/delete-folder" method="POST" style="display:inline;">
+                                <button type="submit"
+                                    onclick="return confirm('Are you sure you want to delete this folder?')">Delete</button>
+                                </form>
+                        </div>
+                        <% }) %>
+                </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-        <% files.forEach(file => { %>
-            <div class="p-4 border rounded shadow">
-                <h3 class="text-lg font-medium"><%= file.name %></h3>
-                <p class="text-sm text-gray-600"><%= file.updatedAt.toLocaleDateString() %></p>
-                <p><%= (file.size / (1024 * 1024)).toFixed(2) %> MB</p>
-            </div>
-        <% }) %>
-    </div>
+                <h2 class="text-xl font-semibold">Your Files:</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                    <% files.forEach(file=> { %>
+                        <a href="/library/file/<%= file.id %>"
+                            class="p-4 border rounded shadow hover:bg-gray-100 transition">
+                            <div class="p-4 border rounded shadow">
+                                <h3 class="text-lg font-medium">
+                                    <%= file.name %>
+                                </h3>
+                                <p class="text-sm text-gray-600">
+                                    <%= file.updatedAt.toLocaleDateString() %>
+                                </p>
+                                <p>
+                                    <%= (file.size / (1024 * 1024)).toFixed(2) %> MB
+                                </p>
+                            </div>
+                        </a>
+                        <% }) %>
+                </div>
 </body>
+
 </html>

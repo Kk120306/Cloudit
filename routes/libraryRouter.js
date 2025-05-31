@@ -8,6 +8,9 @@ const libraryController = require("../controllers/libraryController");
 
 
 router.get("/", libraryController.getRoot);
+router.get("/file/:fileId", libraryController.getFileDetails);
+
+router.post("/file/:fileId/delete-file", libraryController.deleteFile);
 
 router.get("/new-folder", libraryController.newFolderGet); 
 router.post("/new-folder", libraryController.newFolderPost);
