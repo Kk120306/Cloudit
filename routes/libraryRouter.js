@@ -15,6 +15,14 @@ router.post("/new-folder", libraryController.newFolderPost);
 router.get("/upload", libraryController.uploadFileGet);
 router.post("/upload", libraryController.uploadFilePost);
 
+router.get("/update-folder", libraryController.updateFolderGet);
+router.post("/update-folder", libraryController.updateFolderPost);
+
+router.post("/delete-folder", libraryController.deleteFolder);
+router.post("/:folderId/delete-folder", libraryController.deleteFolder);
+
+router.get("/:folderId/update-folder", libraryController.updateFolderGet);
+router.post("/:folderId/update-folder", libraryController.updateFolderPost);
 
 router.get("/:folderId/new-folder", libraryController.newFolderGet); 
 router.post("/:folderId/new-folder", libraryController.newFolderPost);

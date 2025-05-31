@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const db = require('../db/queries');
 const path = require('path');
 const fs = require('fs');
+const { userInfo } = require("os");
 
 async function getRoot(req, res) {
     if (req.isUnauthenticated()) {
@@ -122,7 +123,7 @@ function uploadFileGet(req, res) {
 async function uploadFilePost(req, res) {
     upload(req, res, async err => {
         if (err) {
-            console.error("Upload error:", err); // Log full error for debugging
+            console.error("Upload error:", err); 
             return res.render("error-page", {
                 errorMessage: "Upload error: " + err.message
             });
@@ -162,6 +163,52 @@ async function uploadFilePost(req, res) {
 
 
 
+function updateFolderGet(req, res) {
+    if (req.isAuthenticated()) {
+        const folderId = req.params.folderId || null;
+        const actionPath = `/library${folderId ? '/' + folderId : ''}/update-folder`;
+
+        res.render("update-folder", {
+            errors: [],
+            actionPath
+        });
+    } else {
+        res.render("log-in-form", {
+            errors: []
+        });
+    }
+}
+
+
+async function updateFolderPost(req, res) {
+    const errors = validationResult(req).array();
+
+    if (errors.length > 0) {
+        return res.render("update-folder", {
+            errors: errors,
+            folderId: req.params.folderId || null
+        })
+    }
+
+    const folderId = req.params.folderId || null;
+    const name = req.body.name;
+    const userId = req.user.id;
+
+    try {
+        await db.updateFolder(userId, folderId, name);
+        res.redirect("/library");
+    } catch (err) {
+        console.log("There was an error updating the folder: ", err);
+        throw err;
+    }
+}
+
+async function deleteFolder(req, res) {
+    const folderId = req.params.folderId || null;
+    const userId = req.user.id;
+    await db.deleteFolder(folderId, userId)
+    res.redirect("/library")
+}
 
 
 module.exports = {
@@ -169,5 +216,8 @@ module.exports = {
     uploadFilePost,
     uploadFileGet,
     newFolderGet,
-    newFolderPost
+    newFolderPost,
+    updateFolderGet,
+    updateFolderPost,
+    deleteFolder
 }

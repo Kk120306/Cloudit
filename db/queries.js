@@ -84,16 +84,23 @@ async function getFolders(parentId, userId) {
         where: {
             parentId: parentId,
             userId: userId
+        },
+        orderBy: {
+            updatedAt: 'desc'
         }
     });
     return folders;
 }
+
 
 async function getFiles(folderId, userId) {
     const files = await prisma.file.findMany({
         where: {
             folderId: folderId,
             userId: userId
+        },
+        orderBy: {
+            updatedAt: 'desc'
         }
     });
     return files;
@@ -115,6 +122,90 @@ async function createFile(name, path, size, userId, folderId) {
     }
 }
 
+async function updateFolder(userId, folderId, name) {
+    try {
+        const folder = await prisma.folder.updateMany({
+            where: {
+                userId: userId,
+                id: folderId
+            },
+            data: {
+                name: name
+            }
+        });
+        console.log("updated");
+        return folder;
+    } catch (err) {
+        console.error("Error updating folder:", err);
+        throw err;
+    }
+}
+
+async function getParentId(folderId, userId) {
+    try {
+        const folder = await prisma.folder.findUnique({
+            where: {
+                id: folderId,
+                userId: userId
+            },
+            select: {
+                parentId: true
+            }
+        });
+
+        return folder ? folder.parentId : null;
+    } catch (error) {
+        console.error("Error fetching parentId:", error);
+        throw error;
+    }
+}
+
+async function deleteFolder(folderId, userId) {
+    const parentId = await getParentId(folderId, userId);
+
+    try {
+        await prisma.file.updateMany({
+            where: {
+                folderId: folderId,
+                userId: userId
+            },
+            data: {
+                folderId: parentId
+            }
+        });
+    } catch (err) {
+        console.error("Could not move files: ", err);
+        throw err;
+    }
+
+    try {
+        await prisma.folder.updateMany({
+            where: {
+                id: folderId,
+                userId: userId
+            },
+            data: {
+                parentId: parentId
+            }
+        });
+    } catch (err) {
+        console.error("Could not move folders: ", err);
+        throw err;
+    }
+
+    try {
+        await prisma.folder.delete({
+            where: {
+                id: folderId
+            }
+        });
+    } catch (err) {
+        console.error("Could not delete folder: ", err);
+        throw err;
+    }
+}
+
+
 
 
 
@@ -127,5 +218,7 @@ module.exports = {
     createFolder,
     getFolders,
     createFile,
-    getFiles
+    getFiles,
+    updateFolder,
+    deleteFolder
 }
