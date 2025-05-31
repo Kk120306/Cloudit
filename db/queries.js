@@ -106,13 +106,15 @@ async function getFiles(folderId, userId) {
     return files;
 }
 
-async function createFile(name, path, size, userId, folderId) {
+async function createFile(name, path, size, userId, folderId, cloudinaryUrl, publicId) {
     const data = {
         name,
         path,
         size,
         userId,
-        ...(folderId ? { folderId } : {})
+        ...(folderId ? { folderId } : {}),
+        cloudinaryUrl,
+        publicId
     };
     try {
         return await prisma.file.create({ data });
@@ -207,7 +209,7 @@ async function deleteFolder(folderId, userId) {
 
 async function getFile(userId, fileId) {
     try {
-        const file =  await prisma.file.findUnique({
+        const file = await prisma.file.findUnique({
             where: {
                 id: fileId,
                 userId: userId
@@ -222,9 +224,25 @@ async function getFile(userId, fileId) {
 
 async function deleteFile(fileId, userId) {
     try {
+        const fileRecord = await prisma.file.findUnique({ where: { id: fileId } });
+
+        if (!fileRecord) {
+            throw new Error('File not found');
+        }
+
+        if (fileRecord.publicId) {
+            await cloudinary.uploader.destroy(fileRecord.publicId);
+        }
+        
+    } catch (err) {
+        console.error("could not be deleted", err);
+        throw err;
+    }
+
+    try {
         await prisma.file.delete({
             where: {
-                id : fileId,
+                id: fileId,
                 userId: userId
             }
         })

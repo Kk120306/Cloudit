@@ -2,8 +2,9 @@ const multer = require("multer");
 const { validationResult } = require('express-validator');
 const db = require('../db/queries');
 const path = require('path');
-const fs = require('fs');
-const { userInfo } = require("os");
+// const fs = require('fs');
+// const { userInfo } = require("os");
+const cloudinary = require("../config/cloudinaryConfig");
 
 async function getRoot(req, res) {
     if (req.isUnauthenticated()) {
@@ -79,30 +80,35 @@ async function newFolderPost(req, res) {
 
 
 
-const projectRoot = path.resolve(__dirname, '..');
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const folderId = req.params.folderId || null;
-        const uploadPath = folderId
-            ? path.join(projectRoot, 'uploads', folderId)
-            : path.join(projectRoot, 'uploads');
+// const projectRoot = path.resolve(__dirname, '..');
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         const folderId = req.params.folderId || null;
+//         const uploadPath = folderId
+//             ? path.join(projectRoot, 'uploads', folderId)
+//             : path.join(projectRoot, 'uploads');
 
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true }); 
-        }
+//         if (!fs.existsSync(uploadPath)) {
+//             fs.mkdirSync(uploadPath, { recursive: true }); 
+//         }
 
-        cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    }
-});
+//         cb(null, uploadPath);
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, file.originalname);
+//     }
+// });
 
+// const storage = multer.diskStorage({
+//     filename: function (req, file, cb) {
+//         cb(null, fill.originalname)
+//     }
+// })
 
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 10.5 * 1024 * 1024 },
-}).single('myFile');
+// const upload = multer({
+//     storage: storage,
+//     limits: { fileSize: 10.5 * 1024 * 1024 },
+// }).single('myFile');
 
 
 
@@ -121,45 +127,99 @@ function uploadFileGet(req, res) {
 }
 
 async function uploadFilePost(req, res) {
-    upload(req, res, async err => {
-        if (err) {
-            console.error("Upload error:", err); 
-            return res.render("error-page", {
-                errorMessage: "Upload error: " + err.message
-            });
+    const MAX_SIZE = 10 * 1024 * 1024;
+
+    if (!req.file) {
+        return res.render("error-page", {
+            errorMessage: "No file uploaded."
+        });
+    }
+
+    if (req.file.size > MAX_SIZE) {
+        return res.render("error-page", {
+            errorMessage: "File size exceeds the 10MB limit."
+        });
+    }
+
+    const mimeType = req.file.mimetype;
+    const isPDF = mimeType === 'application/pdf';
+    const resourceType = isPDF ? 'raw' : 'auto';
+
+    let cloudinaryUrl;
+    let publicId;
+
+    try {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: resourceType,
+        });
+
+        cloudinaryUrl = result.secure_url;
+        publicId = result.public_id;
+
+        const folderId = req.params.folderId || null;
+        const name = req.file.originalname;
+        const path = req.file.path;
+        const size = req.file.size;
+        const userId = req.user.id;
+
+        await db.createFile(name, path, size, userId, folderId, cloudinaryUrl, publicId);
+
+        console.log("Uploaded and saved to DB successfully!");
+
+        if (folderId) {
+            res.redirect(`/library/${folderId}`);
+        } else {
+            res.redirect("/library");
         }
-
-        if (!req.file || !req.user) {
-            return res.render("error-page", {
-                errorMessage: "error2."
-            });
-        }
-
-        try {
-            const folderId = req.params.folderId || null;
-            console.log("folder id", folderId);
-            const name = req.file.originalname;
-            const path = req.file.path;
-            const size = req.file.size;
-            const userId = req.user.id;
-
-            await db.createFile(name, path, size, userId, folderId);
-
-            console.log("Uploaded and saved to DB successfully!");
-
-            if (folderId) {
-                res.redirect(`/library/${folderId}`);
-            } else {
-                res.redirect("/library");
-            }
-        } catch (dbError) {
-            console.error("DB insert error:", dbError);
-            res.render("error-page", {
-                errorMessage: "Failed to save file to the database."
-            });
-        }
-    });
+    } catch (err) {
+        console.error("Upload or DB error:", err);
+        return res.render("error-page", {
+            errorMessage: "Failed to upload and save file."
+        });
+    }
 }
+
+
+
+//     upload(req, res, async err => {
+//         if (err) {
+//             console.error("Upload error:", err);
+//             return res.render("error-page", {
+//                 errorMessage: "Upload error: " + err.message
+//             });
+//         }
+
+//         if (!req.file || !req.user) {
+//             return res.render("error-page", {
+//                 errorMessage: "error2."
+//             });
+//         }
+
+//         try {
+//             const folderId = req.params.folderId || null;
+//             console.log("folder id", folderId);
+//             const name = req.file.originalname;
+//             const path = req.file.path;
+//             const size = req.file.size;
+//             const userId = req.user.id;
+
+//             await db.createFile(name, path, size, userId, folderId);
+
+//             console.log("Uploaded and saved to DB successfully!");
+
+//             if (folderId) {
+//                 res.redirect(`/library/${folderId}`);
+//             } else {
+//                 res.redirect("/library");
+//             }
+//         } catch (dbError) {
+//             console.error("DB insert error:", dbError);
+//             res.render("error-page", {
+//                 errorMessage: "Failed to save file to the database."
+//             });
+//         }
+//     });
+// }
 
 
 
@@ -210,7 +270,7 @@ async function deleteFolder(req, res) {
     res.redirect("/library")
 }
 
-async function getFileDetails(req,res) {
+async function getFileDetails(req, res) {
     if (req.isAuthenticated()) {
         const userId = req.user.id;
         const fileId = req.params.fileId;
@@ -225,7 +285,7 @@ async function getFileDetails(req,res) {
     }
 }
 
-async function deleteFile(req,res) {
+async function deleteFile(req, res) {
     const fileId = req.params.fileId;
     const userId = req.user.id;
     await db.deleteFile(fileId, userId);
