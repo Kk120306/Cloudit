@@ -8,7 +8,8 @@
 <body>
     <h1>Create a New Folder</h1>
 
-    <form action="/library<%= folderId ? `/${folderId}` : '' %>/new-folder" method="POST">
+    <form action="<%= actionPath %>" method="POST">
+
         <div>
             <label for="name">Folder Name</label>
             <input id="name" name="name" placeholder="Folder Name" type="text" required />

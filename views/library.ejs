@@ -11,6 +11,11 @@
 
     <h1 class="text-2xl font-bold mb-4">Welcome back, <%= user.username %> 👋</h1>
 
+    <% if (showBack) { %>
+        <a href="/library" class="text-blue-600 underline">⬅ Back to root</a>
+    <% } %>
+    
+
     <h2 class="text-xl font-semibold">Your Folders:</h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">

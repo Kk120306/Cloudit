@@ -4,7 +4,8 @@
     </div>
     <div class="space-x-4 text-sm">
         <span class="text-gray-700">Hi, <%= user.username %></span>
-        <a href="/library/upload" class="text-blue-500 hover:underline">Upload File</a>
+        <a href="<%= filePath %>" class="text-blue-500 hover:underline">Upload File</a>
+        <a href="<%= folderPath %>" class="text-blue-500 hover:underline">New Folder</a>
         <a href="/log-out" class="text-red-500 hover:underline">Log out</a>
     </div>
 </nav>

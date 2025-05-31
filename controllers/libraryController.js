@@ -10,12 +10,19 @@ async function getRoot(req, res) {
     }
 
     const folderId = req.params.folderId || null
-    
+
+    const folderPath = `/library${folderId ? '/' + folderId : ''}/new-folder`;;
+    const filePath = `/library${folderId ? '/' + folderId : ''}/upload`
+
     try {
-        const folders = await db.getFolders(folderId); 
+        const folders = await db.getFolders(folderId);
         res.render("library", {
             user: req.user,
-            folders: folders
+            folders,
+            showBack: folderId !== null, // true if inside a subfolder
+            parentId: folderId,
+            folderPath,
+            filePath
         });
     } catch (err) {
         console.error("Error loading folders: ", err);
@@ -26,16 +33,20 @@ async function getRoot(req, res) {
 
 function newFolderGet(req, res) {
     if (req.isAuthenticated()) {
+        const folderId = req.params.folderId || null;
+        const actionPath = `/library${folderId ? '/' + folderId : ''}/new-folder`;
+
         res.render("new-folder-form", {
             errors: [],
-            folderId: req.params.folderId || null
+            actionPath
         });
     } else {
         res.render("log-in-form", {
             errors: []
-        })
+        });
     }
 }
+
 
 async function newFolderPost(req, res) {
     const errors = validationResult(req).array();
@@ -63,11 +74,9 @@ async function newFolderPost(req, res) {
 
 
 
-
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const folderId = req.params.folderId;
+        const folderId = req.params.folderId || null;
         const uploadPath = folderId ? path.join(__dirname, 'uploads', folderId) : path.join(__dirname, 'uploads');
 
         if (!fs.existsSync(uploadPath)) {
