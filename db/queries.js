@@ -60,10 +60,43 @@ async function getUserByEmail(email) {
     }
 }
 
+async function createFolder(userId, folderId, name) {
+    try {
+        const data = {
+            name: name,
+            userId: userId,
+        };
+
+        if (folderId) {
+            data.parentId = folderId;
+        }
+
+        const folder = await prisma.folder.create({ data });
+        return folder;
+    } catch (err) {
+        console.log("Error creating folder: ", err);
+        throw err;
+    }
+}
+
+async function getFolders(parentId) {
+    const folders = await prisma.folder.findMany({
+        where: {
+            parentId: parentId  
+        }
+    });
+    return folders;
+}
+
+
+
+
 
 module.exports = {
     findUserByUsername,
     findUserById,
     createUser,
-    getUserByEmail
+    getUserByEmail,
+    createFolder,
+    getFolders
 }

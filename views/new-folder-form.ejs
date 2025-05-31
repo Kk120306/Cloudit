@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Create a New Folder</h1>
+
+    <form action="/library<%= folderId ? `/${folderId}` : '' %>/new-folder" method="POST">
+        <div>
+            <label for="name">Folder Name</label>
+            <input id="name" name="name" placeholder="Folder Name" type="text" required />
+            <% const nameError = errors?.find(e => e.path === 'name'); %>
+            <% if (nameError) { %>
+                <p class="text-red-600">
+                    <%= nameError.msg %>
+                </p>
+            <% } %>
+        </div>
+
+        <div>
+            <button type="submit">Create Folder</button>
+        </div>
+    </form>
+
+    <a href="/library">Back to Library</a>
+</body>
+</html>

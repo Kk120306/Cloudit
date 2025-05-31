@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload</title>
+</head>
+<body>
+  <h1>Upload a File (Max: 10.5MB)</h1>
+  <form action="/library/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="myFile" required />
+    <button type="submit">Upload</button>
+    <a href="/library">Back to Library</a>
+  </form>
+</body>
+</html>

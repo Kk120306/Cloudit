@@ -3,12 +3,8 @@
         Cloudit
     </div>
     <div class="space-x-4 text-sm">
-        <% if (user) { %>
-            <span class="text-gray-700">Hi, <%= user.username %></span>
-            <a href="/log-out" class="text-red-500 hover:underline">Log out</a>
-            <% } else { %>
-                <a href="/log-in" class="text-blue-500 hover:underline">Log in</a>
-                <a href="/sign-up" class="text-blue-500 hover:underline">Sign up</a>
-                <% } %>
+        <span class="text-gray-700">Hi, <%= user.username %></span>
+        <a href="/library/upload" class="text-blue-500 hover:underline">Upload File</a>
+        <a href="/log-out" class="text-red-500 hover:underline">Log out</a>
     </div>
 </nav>
