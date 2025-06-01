@@ -1,70 +1,64 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Session {
-    id        String   @id
-    sid       String   @unique
-    data      String   @db.Text
-    expiresAt DateTime
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }
 
 model User {
-    id        String      @id @default(uuid())
-    username  String      @unique
-    email     String      @unique
-    password  String
-    folders   Folder[]
-    files     File[]
-    shareLink shareLink[]
+  id        String      @id @default(uuid())
+  username  String      @unique
+  email     String      @unique
+  password  String
+  files     File[]
+  folders   Folder[]
+  shareLink shareLink[]
 }
 
 model Folder {
-    id         String      @id @default(uuid())
-    name       String
-    userId     String
-    parentId   String? // Parent folder ID if folder is inside another folder
-    createdAt  DateTime    @default(now())
-    updatedAt  DateTime    @updatedAt
-    files      File[]
-    parent     Folder?     @relation("Subfolders", fields: [parentId], references: [id])
-    subfolders Folder[]    @relation("Subfolders")
-    user       User        @relation(fields: [userId], references: [id])
-    shareLink  shareLink[]
+  id         String      @id @default(uuid())
+  name       String
+  userId     String
+  parentId   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  files      File[]
+  parent     Folder?     @relation("Subfolders", fields: [parentId], references: [id])
+  subfolders Folder[]    @relation("Subfolders")
+  user       User        @relation(fields: [userId], references: [id])
+  shareLink  shareLink[]
 }
 
 model File {
-    id            String   @id @default(uuid())
-    name          String
-    path          String
-    cloudinaryUrl String?
-    publicId      String?
-    size          Int
-    userId        String
-    folderId      String? // optional folder
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    user          User     @relation(fields: [userId], references: [id])
-    folder        Folder?  @relation(fields: [folderId], references: [id])
+  id            String   @id @default(uuid())
+  name          String
+  path          String
+  cloudinaryUrl String?
+  publicId      String?
+  size          Int
+  userId        String
+  folderId      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  folder        Folder?  @relation(fields: [folderId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model shareLink {
-    id        String   @id @default(uuid())
-    folderId  String?
-    userId    String
-    expiresAt DateTime
-    createdAt DateTime @default(now())
-    folder    Folder?  @relation(fields: [folderId], references: [id])
-    user      User     @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  folderId  String?
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
