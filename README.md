@@ -2,9 +2,6 @@
 
 Cloudit is a web-based cloud storage application that allows users to sign up, log in, and manage their personal files and folders. Built with Node.js, Express, Prisma, and PostgreSQL, Cloudit offers a user-friendly interface for organizing and accessing files securely.
 
-
-cloudit-production.up.railway.app
-
 ---
 
 🌐 **Live Demo**  
