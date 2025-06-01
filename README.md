@@ -17,7 +17,6 @@ Cloudit is a web-based cloud storage application that allows users to sign up, l
 - **Database**: PostgreSQL, Prisma ORM, Cloudinary
 - **Templating Engine**: EJS
 - **Session Store**: PrismaSessionStore
-- **Deployment**: Compatible with platforms like Vercel and Railway
 
 
 ---
@@ -71,20 +70,3 @@ Cloudit is a web-based cloud storage application that allows users to sign up, l
    npm start
    ```
    - The application will be running at `http://localhost:3000`.
-
-## 📦 Deployment
-
-Cloudit can be deployed on various platforms. For example:
-
-### Deploying to Vercel
-
-1. **Import the project**: Log in to Vercel and import your GitHub repository.
-2. **Set environment variables**: In the Vercel dashboard, navigate to your project settings and add the required environment variables (`DATABASE_URL` and `SESSION_SECRET`).
-3. **Build and deploy**: Vercel will automatically detect the project settings and deploy your application.
-
-### Deploying to Railway
-
-1. **Create a new project**: Log in to Railway and create a new project by linking your GitHub repository.
-2. **Provision a PostgreSQL database**: Add a PostgreSQL plugin to your project.
-3. **Set environment variables**: Railway will automatically set the `DATABASE_URL`. Add `SESSION_SECRET` manually in the environment variables section.
-4. **Deploy**: Railway will build and deploy your application automatically.
