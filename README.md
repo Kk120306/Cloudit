@@ -8,7 +8,7 @@ cloudit-production.up.railway.app
 ---
 
 🌐 **Live Demo**  
-🔗 [View Deployed Site](cloudit-production.up.railway.app)
+🔗 [View Deployed Site](https://cloudit-production.up.railway.app/)
 
 ---
 
