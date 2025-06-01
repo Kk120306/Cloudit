@@ -19,6 +19,22 @@ Cloudit is a web-based cloud storage application that allows users to sign up, l
 - **Session Store**: PrismaSessionStore
 - **Deployment**: Compatible with platforms like Vercel and Railway
 
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Homepage
+
+![Homepage Screenshot](./public/preview/home.png)
+
+### 📄 Library
+
+![PDF Viewer Screenshot](./public/preview/library.png)
+
+---
+
+
 ## ⚙️ Installation
 
 1. **Clone the repository**:
