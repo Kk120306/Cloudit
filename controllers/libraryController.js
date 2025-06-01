@@ -316,7 +316,7 @@ async function shareLinkPost(req, res) {
     const shareLink = await db.createShareLink(folderId, expiresAt, userId);
 
     res.render("share-link", {
-        shareUrl: `http://localhost:3000/library/share/${shareLink.id}`
+        shareUrl: `https://cloudit-production.up.railway.app/library/share/${shareLink.id}`
     })
 }
 
