@@ -9,6 +9,7 @@ Cloudit is a web-based cloud storage application that allows users to sign up, l
 - **Folder Hierarchy**: Create nested folders to structure files effectively.
 - **Session Management**: Persistent user sessions with PrismaSessionStore.
 - **Database Integration**: Utilizes PostgreSQL with Prisma ORM for data management.
+- **Share Folders and Files** : Provides a expiring share link for files and folders for non users.
 
 ## 🛠️ Tech Stack
 
