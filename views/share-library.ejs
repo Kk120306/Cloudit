@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen px-6 py-8 font-sans text-gray-200">
+
+    <!--
+  <% if (showBack) { %>
+    <a href="/library" class="text-blue-500 hover:underline mb-6 inline-block select-none">⬅ Back to root</a>
+  <% } %>
+  -->
+
+    <h2 class="text-2xl font-semibold mb-6 select-none">Shared Files:</h2>
+
+    <a href="/log-in" class="block mb-6 text-blue-500 hover:underline select-none">Log in to access features</a>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <% files.forEach(file=> { %>
+            <a href="<%= file.cloudinaryUrl %>"
+                class="block p-5 bg-gray-900 rounded-lg border border-gray-700 shadow-md hover:border-blue-600 transition select-text">
+                <h3 class="text-lg font-semibold text-white mb-1 truncate">
+                    <%= file.name %>
+                </h3>
+                <p class="text-sm text-gray-400 mb-1">
+                    <%= file.updatedAt.toLocaleDateString() %>
+                </p>
+                <p class="text-sm text-gray-400 font-mono">
+                    <%= (file.size / (1024 * 1024)).toFixed(2) %> MB
+                </p>
+            </a>
+            <% }) %>
+    </div>
+
+</body>
+
+</html>

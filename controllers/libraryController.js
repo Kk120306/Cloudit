@@ -17,6 +17,7 @@ async function getRoot(req, res) {
 
     const folderPath = `/library${folderId ? '/' + folderId : ''}/new-folder`;;
     const filePath = `/library${folderId ? '/' + folderId : ''}/upload`
+    const sharePath = `/library${folderId ? '/' + folderId : ''}/create-share`
     const userId = req.user.id;
 
     try {
@@ -29,7 +30,8 @@ async function getRoot(req, res) {
             showBack: folderId !== null,
             parentId: folderId,
             folderPath,
-            filePath
+            filePath,
+            sharePath
         });
     } catch (err) {
         console.error("Error loading folders: ", err);
@@ -271,18 +273,12 @@ async function deleteFolder(req, res) {
 }
 
 async function getFileDetails(req, res) {
-    if (req.isAuthenticated()) {
-        const userId = req.user.id;
+    const userId = req.user.id || null ;
         const fileId = req.params.fileId;
         const file = await db.getFile(userId, fileId);
         res.render("file", {
             file
-        })
-    } else {
-        res.render("log-in-form", {
-            errors: []
-        });
-    }
+    })
 }
 
 async function deleteFile(req, res) {
@@ -292,6 +288,66 @@ async function deleteFile(req, res) {
     res.redirect("/library")
 }
 
+function shareLinkGet(req, res) {
+    const folderId = req.params.folderId || null;
+    const actionPath = `/library${folderId ? '/' + folderId : ''}/create-share`;
+    if (req.isAuthenticated()) {
+        res.render("share",
+            {
+                folderId,
+                actionPath
+            }
+        )
+    } else {
+        res.render("log-in-form", {
+            errors: []
+        });
+    }
+}
+
+async function shareLinkPost(req, res) {
+    const duration = parseInt(req.body.duration);
+    const folderId = req.params.folderId || null;
+    const userId = req.user.id;
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + parseInt(duration));
+
+    const shareLink = await db.createShareLink(folderId, expiresAt, userId);
+
+    res.render("share-link", {
+        shareUrl: `http://localhost:3000/library/share/${shareLink.id}`
+    })
+}
+
+async function getShareFolder(req, res) {
+    const id = req.params.shareId;
+    const shareObj = await db.getShareObj(id);
+
+    if (!shareObj) {
+        return res.render("error-page", {
+            errorMessage: "Invalid or expired share link."
+        });
+    }
+
+    if (new Date() > shareObj.expiresAt) {
+        return res.render("error-page", {
+            errorMessage: "This share link has expired."
+        });
+    }
+
+    const folderId = shareObj.folderId || null;
+    const userId = shareObj.userId;
+
+    const folders = await db.getFolders(folderId, userId);
+    const files = await db.getFilesById(folderId, userId)
+
+    res.render("share-library", {
+        folders,
+        files,
+        showBack: folderId !== null,
+    });
+}
 
 
 module.exports = {
@@ -304,5 +360,8 @@ module.exports = {
     updateFolderPost,
     deleteFolder,
     getFileDetails,
-    deleteFile
+    deleteFile,
+    shareLinkGet,
+    shareLinkPost,
+    getShareFolder
 }

@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require('bcryptjs');
+const cloudinary = require("../config/cloudinaryConfig");
 
 const prisma = new PrismaClient();
 
@@ -92,6 +93,40 @@ async function getFolders(parentId, userId) {
     return folders;
 }
 
+
+async function getFoldersById(folderId, userId) {
+    const where = {
+        ...(folderId ? { folderId } : {}),
+        userId
+    };
+
+    const folders = await prisma.folder.findMany({
+        where: where,
+        orderBy: {
+            updatedAt: 'desc'
+        }
+    });
+    
+    return folders;
+}
+
+
+
+async function getFilesById(folderId, userId) {
+    const where = {
+        ...(folderId ? { folderId } : {}),
+        userId
+    };
+
+    const files = await prisma.file.findMany({
+        where: where,
+        orderBy: {
+            updatedAt: 'desc'
+        }
+    });
+    
+    return files;
+}
 
 async function getFiles(folderId, userId) {
     const files = await prisma.file.findMany({
@@ -253,6 +288,34 @@ async function deleteFile(fileId, userId) {
 }
 
 
+async function createShareLink(folderId, expiresAt, userId) {
+    const data = {
+        expiresAt,
+        ...(folderId ? { folderId } : {}),
+        userId
+    };
+    try {
+        return await prisma.shareLink.create({ data });
+    } catch (err) {
+        console.log("Error creating link: ", err);
+        throw err;
+    }
+}
+
+async function getShareObj(id) {
+    try {
+        return await prisma.shareLink.findFirst({
+            where : {
+                id: id
+            }
+        })
+    } catch (err) {
+        console.error("could not retrive: ", err) 
+        throw err;
+    }
+}
+
+
 
 module.exports = {
     findUserByUsername,
@@ -266,5 +329,9 @@ module.exports = {
     updateFolder,
     deleteFolder,
     getFile,
-    deleteFile
+    deleteFile,
+    createShareLink,
+    getShareObj,
+    getFoldersById,
+    getFilesById
 }

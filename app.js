@@ -8,7 +8,7 @@ const { PrismaClient } = require('@prisma/client');
 const passport = require("passport");
 const configuratePassport = require("./config/passportConfig");
 
-const indexRouter = require("./routes/indexRouter");
+
 const loginRouter = require("./routes/loginRouter");
 const signupRouter = require("./routes/signupRouter");
 const libraryRouter = require("./routes/libraryRouter")

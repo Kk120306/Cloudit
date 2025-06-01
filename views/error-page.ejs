@@ -1,13 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-black">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Error</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Error</h1>
-    <p><%= errorMessage %></p>
-    <a href="/library">Go back to home</a>
+
+<body class="min-h-screen flex items-center justify-center px-6 py-8 font-sans text-gray-200">
+
+    <main class="w-full max-w-md bg-gray-900 rounded-lg border border-gray-700 p-8 shadow-md text-center select-none">
+        <h1 class="text-4xl font-bold mb-6 text-red-500">Error</h1>
+        <p class="mb-8 text-gray-300">
+            <%= errorMessage %>
+        </p>
+        <a href="/library"
+            class="inline-block px-6 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition font-semibold text-white">
+            Go back to home
+        </a>
+    </main>
+
 </body>
+
 </html>

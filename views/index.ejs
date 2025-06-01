@@ -1,20 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cloudit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a',
+                        },
+                        accent: '#3b82f6', 
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
-    <div>
-        <h1>Cloudit</h1>
+<body class="bg-dark-900 text-white min-h-screen flex items-center justify-center px-4">
+
+    <div class="bg-dark-800 p-8 rounded-2xl shadow-lg w-full max-w-lg text-center border border-dark-700">
+        <div class="flex flex-col items-center mb-6">
+            <img width="94" height="94" src="https://img.icons8.com/3d-fluency/94/cloud-2.png" alt="cloud-2" />
+            <h1 class="text-4xl font-bold mt-4 tracking-tight">Cloudit</h1>
+        </div>
+
+        <p class="text-gray-300 mb-8 text-sm">
+            Welcome to <span class="text-white font-semibold">Cloudit</span> – your cloud-powered storage companion.
+        </p>
+
+        <a href="/log-in">
+            <button
+                class="bg-accent hover:bg-blue-500 transition-colors duration-200 px-6 py-2 rounded-lg font-semibold text-white shadow-md">
+                Get Started
+            </button>
+        </a>
     </div>
 
-    <p>Welcome to Cloudit – Your cloud-powered productivity companion.</p>
-
-    <a href="/log-in">
-        <button>Get Started</button>
-    </a>
 </body>
 </html>
