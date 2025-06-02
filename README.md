@@ -6,6 +6,7 @@ Cloudit is a web-based cloud storage application that allows users to sign up, l
 
 🌐 **Live Demo**  
 🔗 [View Deployed Site](https://cloudit-production.up.railway.app/)
+- Currently being hosted on Railway with a the database by Neon
 
 ---
 
